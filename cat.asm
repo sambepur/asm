@@ -1,11 +1,11 @@
 global _start
-b_len equ 1048576
+MB equ 1048576
 
 section .data
     new_line: db 0xA
 
 section .bss
-    buffer: resb b_len
+    buffer: resb MB
 
 section .text
 
@@ -38,7 +38,7 @@ section .text
         mov rax, 0 ; read
         mov rdi, rcx
         mov rsi, buffer
-        mov rdx, b_len
+        mov rdx, MB
         syscall
 
         cmp rax, 0; if EOF reached
