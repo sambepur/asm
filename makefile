@@ -11,9 +11,5 @@ NAME = $(REAL).bin
 $(REAL): $(RAW)
 	$(AS) $(ASFLAGS) $(RAW) -o $(NAME)
 
-debug $(REAL): $(RAW)
-	$(AS) $(ASDEBUGF) $(RAW) -o $(OBJ)
-	$(LN) $(LNDEBUGF) -o $(REAL) $(OBJ)
-
 clean:
 	rm -f $(NAME)
