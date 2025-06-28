@@ -1,0 +1,9 @@
+[argc]          ; Number of arguments
+[argv[0]]       ; Pointer to the first argument (program name)
+[argv[1]]       ; Pointer to the second argument
+...
+[argv[n]]       ; Pointer to the nth argument
+[NULL]          ; End of argv array
+[envp[0]]       ; First environment variable pointer
+...             ; Other environment variable pointers
+[NULL]          ; End of envp array

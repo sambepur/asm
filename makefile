@@ -1,0 +1,19 @@
+REAL ?= bootloader
+AS = nasm
+LN = ld
+ASFLAGS = -f bin
+ASDEBUGF = -g -f elf64 -F dwarf
+LNDEBUGF = -m elf_x86_64
+OBJ = $(REAL).o
+RAW = $(REAL).asm
+NAME = $(REAL).bin
+
+$(REAL): $(RAW)
+	$(AS) $(ASFLAGS) $(RAW) -o $(NAME)
+
+debug $(REAL): $(RAW)
+	$(AS) $(ASDEBUGF) $(RAW) -o $(OBJ)
+	$(LN) $(LNDEBUGF) -o $(REAL) $(OBJ)
+
+clean:
+	rm -f $(NAME)

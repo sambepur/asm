@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+d_asm_flags="-g -f elf64 -F dwarf"
+d_ln_flags="-m elf_x86_64"
+
+mode="$1"
+name="$2"
+
+if [ -z "$mode" ] || [ -z "$name" ]; then
+    echo "Usage: $0 <mode> <name>"
+    exit 1
+fi
+
+case "$mode" in
+    debug)
+        nasm $d_asm_flags "${name}.asm" -o "${name}.o"
+        echo "nasm $d_asm_flags ${name}.asm -o ${name}.o"
+        ld $d_ln_flags -o "$name" "${name}.o"
+        echo "ld $d_ln_flags -o $name ${name}.o"
+        ;;
+    bin)
+        nasm -f bin "${name}.asm" -o "${name}.bin"
+        echo "nasm -f bin ${name}.asm -o ${name}.bin"
+        ;;
+    normal)
+        nasm -f elf64 "${name}.asm" -o "${name}.o"
+        echo nasm -f elf64 "${name}.asm" -o "${name}.o"
+        ld -o "$name" "${name}.o"
+        echo ld -o "$name" "${name}.o"
+        ;;
+    *)
+        echo "Unknown mode: $mode"
+        exit 1
+        ;;
+esac
