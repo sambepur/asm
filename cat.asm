@@ -25,7 +25,7 @@ section .text
         jz open
         jmp exit
 
-    open:
+    open: 
         mov rax, 2 ; open
         pop rdi
         mov rsi, 00000000
