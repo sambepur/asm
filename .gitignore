@@ -1,0 +1,15 @@
+*.o
+*.pdf
+*.bin
+tta
+lrg
+*.out
+.vscode
+*.reg
+*.png
+init_stack
+*.c
+pdf/
+info/
+build.d/
+test

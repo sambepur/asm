@@ -1,8 +1,8 @@
 global _start
-MB equ 1048576
 
 section .data
     new_line: db 0xA
+    MB equ 1048576
 
 section .bss
     buffer: resb MB
@@ -12,7 +12,7 @@ section .text
     newline: ; for new line if it wasn't reached during reading
         mov rax, 1
         mov rdi, 1
-        mov rsi, new_line
+        lea rsi, [rel new_line]
         mov rdx, 1
         syscall
         jmp exit
@@ -37,7 +37,7 @@ section .text
     read:
         mov rax, 0 ; read
         mov rdi, rcx
-        mov rsi, buffer
+        lea rsi, [rel buffer]
         mov rdx, MB
         syscall
 

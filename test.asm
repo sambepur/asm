@@ -1,11 +1,17 @@
 global _start
 
-section .text
-    _start:
-    mov al, 500
-    jmp exit
-
-    exit:
+_start:
+    mov ax, 0xABCD
+    shr ah, 4
+    cmp ah, 0xA
+    je scc
+    jmp ext
+    scc:
+        mov rdi, 0
         mov rax, 60
-        movzx rdi, al
         syscall
+    ext:
+        mov rdi, 20
+        mov rax, 60
+        syscall
+        

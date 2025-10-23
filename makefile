@@ -4,7 +4,6 @@ LN = ld
 ASFLAGS = -f bin
 ASDEBUGF = -g -f elf64 -F dwarf
 LNDEBUGF = -m elf_x86_64
-OBJ = $(REAL).o
 RAW = $(REAL).asm
 NAME = $(REAL).bin
 
