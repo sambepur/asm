@@ -1,9 +1,38 @@
 bits 16
 [org 0x7c00]
+
+BIOS_TELETYPE equ 0xE
+BIOS_READ_SECTOR equ 0x2
+
+
 _start:
-    
+    mov [BOOT_DRIVE], dl
+
+    mov bp, 0x8000
+    mov sp, bp
+
+    xor ax, ax
+    mov es, ax
+
+    mov bx, 0x9000 ; prepare es:bx to read from disk
+    mov dh, 2 ; sectors to read
+    mov dl, [BOOT_DRIVE]
+    call __load_boot
+    call __new_line
+    mov dx, [bx]
+    call __print_hex
     cli
     hlt
+
+__drop_flags:
+    push ax
+    push dx
+    pushf
+    pop dx
+    call __print_hex
+    pop dx
+    pop ax
+    ret
 
 __print_str:
     mov ah, 0x0E
@@ -46,6 +75,7 @@ __chr_or_num:
         ret
 
 __print_hex:
+    push dx
     push ax
 
     mov al, dh
@@ -73,32 +103,36 @@ __print_hex:
     call __print
 
     pop ax
+    pop dx
     ret
 
-disk_load:
-    push dx ; Store DX on stack so later we can recall
-    ; how many sectors were request to be read ,
-    ; even if it is altered in the meantime
-    mov ah, 0x02 ; BIOS read sector function
-    mov al, dh ; Read DH sectors
-    mov ch, 0x00 ; Select cylinder 0
-    mov dh, 0x00 ; Select head 0
-    mov cl, 0x02 ; Start reading from second sector (i.e. after the boot sector)
-    int 0x13 ; BIOS interrupt
-    jc disk_error ; Jump if error (i.e. carry flag set)
-    pop dx ; Restore DX from the stack
-    cmp dh, al ; if AL (sectors read) != DH (sectors expected)
-    jne disk_error ; display error message
+__load_boot:
+    push dx
+    mov ah, BIOS_READ_SECTOR
+    mov al, dh ; sectors arg in dh
+    mov ch, 0x0 ;  cylinder 0
+    mov dh, 0x0 ;   head 0
+    mov cl, 0x2 ; second sector
+    int 0x13
+    pop dx
+    jc __load_err
+    cmp dh, al
+    jne __load_err
     ret
-disk_error:
-    mov si, DISK_ERROR_MSG
-    call __print_str
-    jmp $
-; Variables
-DISK_ERROR_MSG: db "Disk read error!", 0
+    __load_err:
+        call __drop_flags
+        call __new_line
+        mov si, BOOT_ERR_MES
+        call __print_str
+        hlt
+        ret
 
-msg: db "data",0
-data: db 'X'
 
+TAG_MES: db "tag", 0x0
+BOOT_DRIVE: db 0
+BOOT_ERR_MES: db "bad load", 0x0
 times 510 - ($ - $$) db 0
 dw 0xAA55
+
+times 256 dw 0xbeef
+times 256 dw 0xface
